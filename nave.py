@@ -26,8 +26,8 @@ class NavePrincipal(pygame.sprite.Sprite):
             if self.rect.left <= -30:
                 self.rect.left = 30
 
-            if self.rect.rigth > 530:
-                self.rect.rigth = 530
+            if self.rect.right > 530:
+                self.rect.right = 530
 
             if self.rect.top <= -15:
                 self.rect.top = -15
@@ -48,7 +48,7 @@ def SpaceInvaders():
 
     jogador = NavePrincipal()
     fundo = pygame.image.load("imagens/Mapa.JPG")
-    jogador = True
+    jogando = True
 
     while True:
         jogador.movimento()
@@ -66,7 +66,7 @@ def SpaceInvaders():
         if keys [K_DOWN]:
             jogador.rect.bottom += jogador.velocidade
 
-        tela.blit(fundo(0,0))
+        tela.blit(fundo, (0,0))
         jogador.colocar(tela)
         pygame.display.update()
 
