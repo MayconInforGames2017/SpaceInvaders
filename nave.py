@@ -5,6 +5,22 @@ from pygame.locals import *
 largura = 500
 altura = 400
 
+class Bala(pygame.sprite.Sprite):
+    def __init__(self, posy, posx):
+        pygame.sprite.Sprite.__init__(self)
+        self.dispara = pygame.image.load("imagens/municao.png")
+
+        self.rect = self.dispara.get_rect()
+        self.velocidadeDisparo = 1
+        self.rect.top = posy
+        self.rect.left = posx
+
+    def trajeto(self):
+        self.rect.top = self.rect.top - self.velocidadeDisparo
+
+    def colocar(self, superficieBala):
+        superficieBala.blit(self.dispara, self.rect)
+
 class NavePrincipal(pygame.sprite.Sprite):
     def __init__(self):
         #Nave Principal
@@ -35,8 +51,9 @@ class NavePrincipal(pygame.sprite.Sprite):
             if self.rect.bottom > 415:
                 self.rect.bottom = 415
 
-    def disparar(self):
-        pass
+    def disparar(self, x, y):
+        municaoBala = Bala(x, y)
+        self.listaDisparo.append(municaoBala)
 
     def colocar(self, superficie):
         superficie.blit(self.nave_principal, self.rect)
@@ -50,8 +67,11 @@ def SpaceInvaders():
     fundo = pygame.image.load("imagens/Mapa.JPG")
     jogando = True
 
+    balaProjetil = Bala(largura / 2, altura - 200)
+
     while True:
         jogador.movimento()
+        balaProjetil.trajeto()
         keys = pygame.key.get_pressed()
         for evento in pygame.event.get():
             if evento.type == QUIT:
@@ -65,9 +85,19 @@ def SpaceInvaders():
             jogador.rect.top -= jogador.velocidade
         if keys [K_DOWN]:
             jogador.rect.bottom += jogador.velocidade
+        if keys == [K_0]:
+            x, y = jogador.rect.center
+            jogador.disparar(x, y)
 
         tela.blit(fundo, (0,0))
+        balaProjetil.colocar(tela)
         jogador.colocar(tela)
+        if len(jogador.listaDisparo) > 0:
+            for x in jogador.listaDisparo:
+                x.colocar(tela)
+                x.trajeto()
+                if x.rect.top < 100:
+                    jogador.listaDisparo.remove(x)
         pygame.display.update()
 
 SpaceInvaders()
