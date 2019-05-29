@@ -8,7 +8,7 @@ altura = 400
 class Bala(pygame.sprite.Sprite):
     def __init__(self, posy, posx):
         pygame.sprite.Sprite.__init__(self)
-        self.dispara = pygame.image.load("imagens/municao.png")
+        self.dispara = pygame.image.load("imagens/Tiro(naveprincipal).png")
 
         self.rect = self.dispara.get_rect()
         self.velocidadeDisparo = 1
@@ -40,7 +40,7 @@ class NavePrincipal(pygame.sprite.Sprite):
     def movimento(self):
         if self.vida == True:
             if self.rect.left <= -30:
-                self.rect.left = 30
+                self.rect.left = -30
 
             if self.rect.right > 530:
                 self.rect.right = 530
@@ -77,6 +77,10 @@ def SpaceInvaders():
             if evento.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == K_SPACE:
+                    x, y = jogador.rect.center
+                    jogador.disparar(x,y)
         if keys [K_LEFT]:
             jogador.rect.left -= jogador.velocidade
         if keys [K_RIGHT]:
@@ -85,9 +89,6 @@ def SpaceInvaders():
             jogador.rect.top -= jogador.velocidade
         if keys [K_DOWN]:
             jogador.rect.bottom += jogador.velocidade
-        if keys == [K_0]:
-            x, y = jogador.rect.center
-            jogador.disparar(x, y)
 
         tela.blit(fundo, (0,0))
         balaProjetil.colocar(tela)
