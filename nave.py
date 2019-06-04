@@ -1,25 +1,25 @@
-import pygame
-import sys
+import pygame, sys
 from pygame.locals import *
 
 largura = 500
 altura = 400
 
-class Bala(pygame.sprite.Sprite):
+class Municao(pygame.sprite.Sprite):
     def __init__(self, posy, posx):
+        #Disparos
         pygame.sprite.Sprite.__init__(self)
-        self.dispara = pygame.image.load("imagens/Tiro(naveprincipal).png")
+        self.disparaMunicao = pygame.image.load("imagens/Tiro(naveprincipal).JPG")
 
-        self.rect = self.dispara.get_rect()
-        self.velocidadeDisparo = 1
+        self.rect = self.disparaMunicao.get_rect()
+        self.velocidadeDisparo = 3
         self.rect.top = posy
         self.rect.left = posx
 
     def trajeto(self):
         self.rect.top = self.rect.top - self.velocidadeDisparo
 
-    def colocar(self, superficieBala):
-        superficieBala.blit(self.dispara, self.rect)
+    def colocar(self, superficie):
+        superficie.blit(self.disparaMunicao, self.rect)
 
 class NavePrincipal(pygame.sprite.Sprite):
     def __init__(self):
@@ -35,24 +35,24 @@ class NavePrincipal(pygame.sprite.Sprite):
         #Disparo, vida e velocidade
         self.listaDisparo = []
         self.vida = True
-        self.velocidade = (1)
+        self.velocidade = (3)
 
     def movimento(self):
         if self.vida == True:
-            if self.rect.left <= -30:
-                self.rect.left = -30
+            if self.rect.left <= 0:
+                self.rect.left = 0
 
-            if self.rect.right > 530:
-                self.rect.right = 530
+            if self.rect.right > 500:
+                self.rect.right = 500
 
-            if self.rect.top <= -15:
-                self.rect.top = -15
+            if self.rect.top <= 0:
+                self.rect.top = 0
 
-            if self.rect.bottom > 415:
-                self.rect.bottom = 415
+            if self.rect.bottom > 400:
+                self.rect.bottom = 400
 
     def disparar(self, x, y):
-        municaoBala = Bala(x, y)
+        municaoBala = Municao(x, y)
         self.listaDisparo.append(municaoBala)
 
     def colocar(self, superficie):
@@ -62,16 +62,20 @@ def SpaceInvaders():
     pygame.init()
     tela = pygame.display.set_mode((largura, altura))
     pygame.display.set_caption("Invasão Alienígena")
-
+    #Jogador e fundo da tela
     jogador = NavePrincipal()
     fundo = pygame.image.load("imagens/Mapa.JPG")
+    #Jogando
     jogando = True
 
-    balaProjetil = Bala(largura / 2, altura - 200)
+    municaoProjetil = Municao(largura / 2, altura - 60)
+    #Frames por segundo
+    relogio = pygame.time.Clock()
 
     while True:
+        relogio.tick(70)
         jogador.movimento()
-        balaProjetil.trajeto()
+        municaoProjetil.trajeto()
         keys = pygame.key.get_pressed()
         for evento in pygame.event.get():
             if evento.type == QUIT:
@@ -80,7 +84,7 @@ def SpaceInvaders():
             if evento.type == pygame.KEYDOWN:
                 if evento.key == K_SPACE:
                     x, y = jogador.rect.center
-                    jogador.disparar(x,y)
+                    jogador.disparar(x-1,y-22)
         if keys [K_LEFT]:
             jogador.rect.left -= jogador.velocidade
         if keys [K_RIGHT]:
@@ -91,7 +95,7 @@ def SpaceInvaders():
             jogador.rect.bottom += jogador.velocidade
 
         tela.blit(fundo, (0,0))
-        balaProjetil.colocar(tela)
+        #municaoProjetil.colocar(tela)
         jogador.colocar(tela)
         if len(jogador.listaDisparo) > 0:
             for x in jogador.listaDisparo:
@@ -99,6 +103,7 @@ def SpaceInvaders():
                 x.trajeto()
                 if x.rect.top < 100:
                     jogador.listaDisparo.remove(x)
+
         pygame.display.update()
 
 SpaceInvaders()
