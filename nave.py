@@ -12,7 +12,7 @@ class Bala(pygame.sprite.Sprite):
         self.bala_principal = pygame.image.load('imagens/Municao(naveprincipal).JPG')
 
         self.rect = self.bala_principal.get_rect()
-        self.velocidade_bala = 3
+        self.velocidade_bala = 1
         self.rect.top = posy
         self.rect.left = posx
 
@@ -37,21 +37,21 @@ class NavePrincipal(pygame.sprite.Sprite):
         #DISPARO, VIDA E VELOCIDADE
         self.listaDisparo = []
         self.vida = True
-        self.velocidade = (3)
+        self.velocidade = 1
 
     def movimento(self):
         if self.vida == True:
-            if self.rect.left <= 0:
-                self.rect.left = 0
+            if self.rect.left <= 3:
+                self.rect.left = 3
 
-            if self.rect.right > 500:
-                self.rect.right = 500
+            if self.rect.right > 497:
+                self.rect.right = 497
 
-            if self.rect.top <= 0:
-                self.rect.top = 0
+            if self.rect.top <= 3:
+                self.rect.top = 3
 
-            if self.rect.bottom > 400:
-                self.rect.bottom = 400
+            if self.rect.bottom > 397:
+                self.rect.bottom = 397
 
 
 
@@ -78,10 +78,10 @@ def InvasaoAlienigina():
 
     bala_principal = Bala(largura / 2, altura - 60)
     #FRAMES POR SEGUNDO
-    fps = pygame.time.Clock()
+    #fps = pygame.time.Clock()
 
     while True :
-        fps.tick(70)
+        #fps.tick(60)
         jogador.movimento()
         bala_principal.trajetoria()
         keys = pygame.key.get_pressed()
