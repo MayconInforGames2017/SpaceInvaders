@@ -6,84 +6,72 @@ largura = 500
 altura = 400
 
 class Bala(pygame.sprite.Sprite):
-    def __init__(self, posx, posy):
-        #DISPAROS
+    def __init__(self, posy, posx):
         pygame.sprite.Sprite.__init__(self)
-        self.bala_principal = pygame.image.load('imagens/Tiro(naveprincipal).JPG')
+        self.dispara = pygame.image.load("imagens/Tiro(naveprincipal).png")
 
-        self.rect = self.bala_principal.get_rect()
-        self.velocidade_bala = 3
+        self.rect = self.dispara.get_rect()
+        self.velocidadeDisparo = 1
         self.rect.top = posy
         self.rect.left = posx
 
-    def trajetoria(self):
-        self.rect.top = self.rect.top - self.velocidade_bala
+    def trajeto(self):
+        self.rect.top = self.rect.top - self.velocidadeDisparo
 
-    def colocar(self, superficie):
-        superficie.blit(self.bala_principal, self.rect)
-
+    def colocar(self, superficieBala):
+        superficieBala.blit(self.dispara, self.rect)
 
 class NavePrincipal(pygame.sprite.Sprite):
     def __init__(self):
-        #NAVE PRINCIPAL
+        #Nave Principal
         pygame.sprite.Sprite.__init__(self)
-        self.nave_principal = pygame.image.load('imagens/NavePrincipal.PNG')
+        self.nave_principal = pygame.image.load("imagens/NavePrincipal.png")
 
-        #POSIÇÃO DA NAVE NA TELA
+        #Posicao da nave na tela
         self.rect = self.nave_principal.get_rect()
-        self.rect.centerx = largura/2
-        self.rect.centery = altura-50
+        self.rect.centerx = altura/2
+        self.rect.centery = largura-50
 
-        #DISPARO, VIDA E VELOCIDADE
+        #Disparo, vida e velocidade
         self.listaDisparo = []
         self.vida = True
-        self.velocidade = (3)
+        self.velocidade = (1)
 
     def movimento(self):
         if self.vida == True:
-            if self.rect.left <= 0:
-                self.rect.left = 0
+            if self.rect.left <= -30:
+                self.rect.left = -30
 
-            if self.rect.right > 500:
-                self.rect.right = 500
+            if self.rect.right > 530:
+                self.rect.right = 530
 
-            if self.rect.top <= 0:
-                self.rect.top = 0
+            if self.rect.top <= -15:
+                self.rect.top = -15
 
-            if self.rect.bottom > 400:
-                self.rect.bottom = 400
-
-
+            if self.rect.bottom > 415:
+                self.rect.bottom = 415
 
     def disparar(self, x, y):
-        minha_bala = Bala(x,y)
-        self.listaDisparo.append(minha_bala)
+        municaoBala = Bala(x, y)
+        self.listaDisparo.append(municaoBala)
 
     def colocar(self, superficie):
         superficie.blit(self.nave_principal, self.rect)
 
-
-
-def InvasaoAlienigina():
+def SpaceInvaders():
     pygame.init()
-    #DIMENSÕES DA TELA
     tela = pygame.display.set_mode((largura, altura))
-    pygame.display.set_caption('Invasão Alienígena')
+    pygame.display.set_caption("Invasão Alienígena")
 
-    #JOGADOR E FUNDO
     jogador = NavePrincipal()
-    fundo = pygame.image.load('imagens/Mapa.JPG')
-    #JOGANDO
+    fundo = pygame.image.load("imagens/Mapa.JPG")
     jogando = True
 
-    bala_principal = Bala(largura / 2, altura - 60)
-    #FRAMES POR SEGUNDO
-    fps = pygame.time.Clock()
+    balaProjetil = Bala(largura / 2, altura - 200)
 
-    while True :
-        fps.tick(70)
+    while True:
         jogador.movimento()
-        bala_principal.trajetoria()
+        balaProjetil.trajeto()
         keys = pygame.key.get_pressed()
         for evento in pygame.event.get():
             if evento.type == QUIT:
@@ -91,9 +79,8 @@ def InvasaoAlienigina():
                 sys.exit()
             if evento.type == pygame.KEYDOWN:
                 if evento.key == K_SPACE:
-                    x,y = jogador.rect.center
-                    jogador.disparar(x-1,y-22)
-
+                    x, y = jogador.rect.center
+                    jogador.disparar(x,y)
         if keys [K_LEFT]:
             jogador.rect.left -= jogador.velocidade
         if keys [K_RIGHT]:
@@ -103,17 +90,15 @@ def InvasaoAlienigina():
         if keys [K_DOWN]:
             jogador.rect.bottom += jogador.velocidade
 
-
-
-        #OBJETOS
         tela.blit(fundo, (0,0))
+        balaProjetil.colocar(tela)
         jogador.colocar(tela)
-        if len (jogador.listaDisparo) > 0:
+        if len(jogador.listaDisparo) > 0:
             for x in jogador.listaDisparo:
                 x.colocar(tela)
-                x.trajetoria()
-                if x.rect.top < 0:
+                x.trajeto()
+                if x.rect.top < 100:
                     jogador.listaDisparo.remove(x)
         pygame.display.update()
 
-InvasaoAlienigina()
+SpaceInvaders()
