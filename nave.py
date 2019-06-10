@@ -1,9 +1,27 @@
 import pygame
 import sys
+import random
 from pygame.locals import *
 
 largura = 500
 altura = 400
+
+class NaveInimiga(pygame.sprite.Sprite):
+    def __init__(self, posx, posy):
+        #DISPAROS
+        pygame.sprite.Sprite.__init__(self)
+        self.nave_inimiga = pygame.image.load('imagens/NaveInimiga.PNG')
+
+        self.rect = self.nave_inimiga.get_rect()
+
+        self.listaInimigos = []
+        self.velocidade_inimigo = 1
+        self.rect.top = posy
+        self.rect.left = posx
+
+    def colocar(self, superficie):
+        superficie.blit(self.nave_inimiga, self.rect)
+
 
 class Bala(pygame.sprite.Sprite):
     def __init__(self, posx, posy):
@@ -12,7 +30,7 @@ class Bala(pygame.sprite.Sprite):
         self.bala_principal = pygame.image.load('imagens/Municao(naveprincipal).JPG')
 
         self.rect = self.bala_principal.get_rect()
-        self.velocidade_bala = 1
+        self.velocidade_bala = 2
         self.rect.top = posy
         self.rect.left = posx
 
@@ -37,7 +55,7 @@ class NavePrincipal(pygame.sprite.Sprite):
         #DISPARO, VIDA E VELOCIDADE
         self.listaDisparo = []
         self.vida = True
-        self.velocidade = 1
+        self.velocidade = 2
 
     def movimento(self):
         if self.vida == True:
@@ -73,15 +91,23 @@ def InvasaoAlienigina():
     #JOGADOR E FUNDO
     jogador = NavePrincipal()
     fundo = pygame.image.load('imagens/Mapa.JPG')
+
     #JOGANDO
     jogando = True
 
+    #VIDA INIMIGO
+    vida_inimigo = True
+
+    #POSIÇÃO INIMIGO
+    posX = random.random()*500
+    posY = random.random()*50
+
+    #INIMIGO
+    inimigo = NaveInimiga(posX,posY)
+
     bala_principal = Bala(largura / 2, altura - 60)
-    #FRAMES POR SEGUNDO
-    #fps = pygame.time.Clock()
 
     while True :
-        #fps.tick(60)
         jogador.movimento()
         bala_principal.trajetoria()
         keys = pygame.key.get_pressed()
@@ -89,6 +115,7 @@ def InvasaoAlienigina():
             if evento.type == QUIT:
                 pygame.quit()
                 sys.exit()
+
             if evento.type == pygame.KEYDOWN:
                 if evento.key == K_SPACE:
                     x,y = jogador.rect.center
@@ -103,11 +130,21 @@ def InvasaoAlienigina():
         if keys [K_DOWN]:
             jogador.rect.bottom += jogador.velocidade
 
-
+        if vida_inimigo == True:
+            inimigo.rect.top += inimigo.velocidade_inimigo
 
         #OBJETOS
         tela.blit(fundo, (0,0))
         jogador.colocar(tela)
+        inimigo.colocar(tela)
+
+        if len (inimigo.listaInimigos) > 0:
+            for x in inimigo.listaInimigos:
+                x.colocar(tela)
+                x.trajetoria()
+                if x.rect.top < 400:
+                    inimigo.listaInimigos.remove(x)
+
         if len (jogador.listaDisparo) > 0:
             for x in jogador.listaDisparo:
                 x.colocar(tela)
